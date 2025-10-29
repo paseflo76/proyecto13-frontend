@@ -20,7 +20,14 @@ const FilterContainer = styled.div`
 `
 
 const CategorySection = styled.div`
+  diplay: flex;
+  flex-direction: column;
+
   margin-bottom: 45px;
+  @media (max-width: 756px) {
+    diplay: flex;
+    flex-direction: column;
+  }
 `
 
 const CategoryTitle = styled.h2`

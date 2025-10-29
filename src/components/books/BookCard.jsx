@@ -11,10 +11,10 @@ const CardBooks = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transform: scale(0.8);
   transform-origin: top left;
-  @media (max-width: 600px) {
+
+  @media (max-width: 756px) {
     transform: scale(0.6);
     width: 200px;
-    height: auto;
     font-size: 20px;
   }
 `
@@ -22,7 +22,7 @@ const CardBooks = styled.div`
 const Title = styled.h3`
   margin: 0;
   font-size: 14px;
-  @media (max-width: 600px) {
+  @media (max-width: 756px) {
     font-size: 20px;
   }
 `
@@ -33,7 +33,8 @@ const Cover = styled.img`
   object-fit: cover;
   border-radius: 10px;
   margin-top: 8px;
-  @media (max-width: 600px) {
+
+  @media (max-width: 756px) {
     height: 200px;
   }
 `

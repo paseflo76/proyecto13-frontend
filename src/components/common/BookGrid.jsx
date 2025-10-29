@@ -8,7 +8,7 @@ const Grid = styled.div`
   justify-items: center;
 
   @media (max-width: 756px) {
-    grid-template-columns: repeat(2, 200px);
+    grid-template-columns: repeat(2, 172px);
   }
 `
 
