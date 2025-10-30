@@ -25,8 +25,7 @@ const CategorySection = styled.div`
 
   margin-bottom: 45px;
   @media (max-width: 756px) {
-    diplay: flex;
-    flex-direction: column;
+    margin-left: 25px;
   }
 `
 
