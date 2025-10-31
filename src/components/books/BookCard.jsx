@@ -13,8 +13,7 @@ const CardBooks = styled.div`
   transform-origin: top left;
 
   @media (max-width: 756px) {
-    transform: scale(0.6);
-    width: 200px;
+    width: 180px;
     font-size: 20px;
   }
 `
