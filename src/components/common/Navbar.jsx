@@ -46,10 +46,11 @@ const Links = styled.div`
     left: 0;
     width: 100%;
     flex-direction: column;
-    background-color: #222;
+    background-color: #222222eb;
     align-items: center;
     gap: 20px;
     padding: 20px 0;
+border-radius:10px
     transform: ${({ open }) => (open ? 'translateY(0)' : 'translateY(-100%)')};
     opacity: ${({ open }) => (open ? 1 : 0)};
     transition: all 0.4s ease;

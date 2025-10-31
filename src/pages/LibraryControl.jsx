@@ -20,7 +20,7 @@ const Form = styled.div`
   flex-direction: column;
   gap: 15px;
   margin-bottom: 15px;
-  width: 300px;
+  width: 290px;
 `
 
 const Input = styled.input`
@@ -38,14 +38,15 @@ const BookItem = styled.div`
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  width: 190px;
+  width: 140px;
+  margin-left: 14px;
+  justify-content: center;
 `
 
 const BookCover = styled.img`
   width: 100px;
   height: 160px;
-  object-fit: cover;
-  border-radius: 8px;
+  object-fit: contain;
 `
 
 export default function LibraryControl() {

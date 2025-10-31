@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { patchLoan } from '../../api/LoansApi'
 import { useState } from 'react'
+import Button from '../common/Button'
 
 const Card = styled.div`
   background-color: #f9f9f9;
@@ -12,9 +13,11 @@ const Card = styled.div`
   align-items: flex-start;
   gap: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 50%;
+
   @media (max-width: 600px) {
-    width: 90%;
+    flex-direction: column;
+    align-items: center;
+  }
 `
 
 const Img = styled.img`
@@ -31,21 +34,6 @@ const Info = styled.div`
 const Title = styled.h3`
   margin: 0;
   font-size: 1.2rem;
-`
-
-const Button = styled.button`
-  margin-top: 0.5rem;
-  padding: 0.5rem 1rem;
-  background-color: #6c63ff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
 `
 
 export default function LoanCard({ loan }) {
@@ -74,7 +62,11 @@ export default function LoanCard({ loan }) {
         <p>Fecha préstamo: {new Date(loan.loanDate).toLocaleDateString()}</p>
         <p>Estado: {status}</p>
         {status === 'ongoing' && (
-          <Button onClick={handleReturn} disabled={loading}>
+          <Button
+            onClick={handleReturn}
+            disabled={loading}
+            bg={loading ? '#aaa' : '#6c63ff'}
+          >
             {loading ? 'Procesando...' : 'Devolver'}
           </Button>
         )}

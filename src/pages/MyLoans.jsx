@@ -5,6 +5,11 @@ import Loader from '../components/common/Loader'
 import { useLoans } from '../hooks/useloans'
 
 const Container = styled.div`
+display: flex
+;
+    flex-direction: column;
+    align-items: center;
+}
   padding: 30px;
 `
 

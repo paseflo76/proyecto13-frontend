@@ -9,7 +9,7 @@ const CardBooks = styled.div`
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transform: scale(0.8);
+  transform: scale(0.7);
   transform-origin: top left;
 
   @media (max-width: 756px) {
@@ -30,7 +30,7 @@ const Title = styled.h3`
 const Cover = styled.img`
   width: 100%;
   height: 280px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 10px;
   margin-top: 8px;
 
