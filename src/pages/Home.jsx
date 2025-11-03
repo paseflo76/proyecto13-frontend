@@ -5,12 +5,12 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 76svh;
+  height: 84svh;
 `
 
 const Title = styled.h1`
   font-size: 40px;
-  color: #04253bff;
+  color: var(--color-text1);
   margin-bottom: 10px;
   text-shadow: 1px 3px 0 #969696, 1px 13px 5px #aba8a8;
   @media (max-width: 760px) {

@@ -7,8 +7,8 @@ const Nav = styled.nav`
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #222;
-  color: white;
+  background-color: var(--color-text1);
+  color: var(--color-text2);
   position: sticky;
   top: 0;
   z-index: 1000;

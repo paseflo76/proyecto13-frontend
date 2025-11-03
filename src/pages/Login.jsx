@@ -30,6 +30,11 @@ const Button = styled.button`
   border-radius: 5px;
   background-color: #d1beebff;
 `
+const ErrorMessage = styled.p`
+  color: var(--color-error);
+  font-weight: bold;
+  margin-top: 10px;
+`
 
 export default function Login() {
   const { login } = useAuth()
@@ -76,7 +81,7 @@ export default function Login() {
           {loading ? 'Cargando...' : 'Iniciar sesión'}
         </Button>
       </Form>
-      {error && <p>{error}</p>}
+      {error && <ErrorMessage>{error}</ErrorMessage>}
     </Container>
   )
 }

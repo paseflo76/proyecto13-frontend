@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -13,6 +13,7 @@ import NotFound from './pages/NotFound'
 import RoutePrivate from './components/common/RoutePrivate'
 import LibraryControl from './pages/LibraryControl'
 import Footer from './components/common/Footer'
+import { GlobalStyle } from './GlobalStyle'
 
 const Container = styled.div`
   min-height: 100vh;
@@ -20,8 +21,13 @@ const Container = styled.div`
 `
 
 function App() {
+  const location = useLocation()
+  const hideFooter =
+    location.pathname === '/login' || location.pathname === '/register'
+
   return (
     <AuthProvider>
+      <GlobalStyle />
       <Container>
         <Navbar />
         <Routes>
@@ -71,7 +77,7 @@ function App() {
           <Route path='/404' element={<NotFound />} />
           <Route path='*' element={<Navigate to='/404' />} />
         </Routes>
-        <Footer />
+        {!hideFooter && <Footer />}
       </Container>
     </AuthProvider>
   )

@@ -5,7 +5,7 @@ import { postLoan } from '../../api/LoansApi'
 import Button from '../common/Button'
 
 const CardBooks = styled.div`
-  background-color: #d1cfe9ff;
+  background-color: var(--color-card);
   padding: 12px;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -97,7 +97,7 @@ export default function BookCard({ book }) {
         <Button
           onClick={handleLoan}
           disabled={loading || !book.available}
-          bg={book.available ? '#6c5ce7' : '#aaa'}
+          $bg={book.available ? '#6c5ce7' : '#e76d6dff'}
         >
           {book.available ? 'Pedir préstamo' : 'No disponible'}
         </Button>

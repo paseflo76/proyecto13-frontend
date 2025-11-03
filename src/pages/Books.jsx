@@ -32,7 +32,7 @@ const CategorySection = styled.div`
 const CategoryTitle = styled.h2`
   margin-bottom: 15px;
   text-transform: capitalize;
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid var(--color-border);
   padding-bottom: 5px;
 `
 

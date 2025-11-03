@@ -8,13 +8,13 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #c6d1dbff;
+  background-color: var(--color-background);
   min-height: 100vh;
 `
 
 const Title = styled.h1`
   margin-bottom: 30px;
-  color: #2d3436;
+  color: var(--color-text1);
   font-size: 2rem;
   text-align: center;
 `
@@ -31,9 +31,7 @@ const TableWrapper = styled.div`
     border-radius: 20px;
     box-shadow: none;
     width: 100vw;
-    margin-left: -20px;
-    margin-right: -20px;
-  }
+  
 `
 
 const Table = styled.table`
@@ -43,8 +41,8 @@ const Table = styled.table`
   min-width: 600px;
 
   th {
-    background-color: #6c5ce7;
-    color: white;
+    background-color: var(--color-primary);
+    color: var(--color-text2);
     padding: 14px;
     text-align: left;
     font-weight: 600;
