@@ -6,35 +6,62 @@ import Button from '../common/Button'
 
 const CardBooks = styled.div`
   background-color: #d1cfe9ff;
-  padding: 15px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transform: scale(0.7);
-  transform-origin: top left;
+  width: 190px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
 
   @media (max-width: 756px) {
-    width: 180px;
-    font-size: 20px;
+    width: 160px;
+    padding: 10px;
+    margin-right: 70px;
   }
+`
+
+const BookBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 `
 
 const Title = styled.h3`
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 1.2;
+  text-align: center;
+
   @media (max-width: 756px) {
-    font-size: 20px;
+    font-size: 15px;
   }
+`
+
+const Author = styled.p`
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.2;
+`
+
+const Category = styled.p`
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.1;
+  color: #333;
 `
 
 const Cover = styled.img`
   width: 100%;
-  height: 280px;
+  height: 220px;
   object-fit: contain;
-  border-radius: 10px;
-  margin-top: 8px;
+  border-radius: 8px;
 
   @media (max-width: 756px) {
-    height: 200px;
+    height: 180px;
   }
 `
 
@@ -62,18 +89,20 @@ export default function BookCard({ book }) {
 
   return (
     <CardBooks>
-      <Title>{book.title}</Title>
-      <p>{book.author}</p>
-      <p>Categoría: {book.category}</p>
-      <Cover src={book.covers || '/assets/no-img.png'} alt={book.title} />
-      <Button
-        onClick={handleLoan}
-        disabled={loading || !book.available}
-        bg={book.available ? '#6c5ce7' : '#aaa'}
-      >
-        {book.available ? 'Pedir préstamo' : 'No disponible'}
-      </Button>
-      {message && <p>{message}</p>}
+      <BookBox>
+        <Title>{book.title}</Title>
+        <Author>{book.author}</Author>
+        <Category>Categoría: {book.category}</Category>
+        <Cover src={book.covers || '/assets/no-img.png'} alt={book.title} />
+        <Button
+          onClick={handleLoan}
+          disabled={loading || !book.available}
+          bg={book.available ? '#6c5ce7' : '#aaa'}
+        >
+          {book.available ? 'Pedir préstamo' : 'No disponible'}
+        </Button>
+        {message && <p style={{ fontSize: '11px', margin: 0 }}>{message}</p>}
+      </BookBox>
     </CardBooks>
   )
 }

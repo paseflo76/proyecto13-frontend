@@ -12,10 +12,11 @@ import ProtectedRoute from './components/common/ProtectedRoute'
 import NotFound from './pages/NotFound'
 import RoutePrivate from './components/common/RoutePrivate'
 import LibraryControl from './pages/LibraryControl'
+import Footer from './components/common/Footer'
 
 const Container = styled.div`
   min-height: 100vh;
-  background-color: #c0bcd8ff;
+  background-color: #e2dcc5;
 `
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
           <Route path='/404' element={<NotFound />} />
           <Route path='*' element={<Navigate to='/404' />} />
         </Routes>
+        <Footer />
       </Container>
     </AuthProvider>
   )

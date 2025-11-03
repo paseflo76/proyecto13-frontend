@@ -13,40 +13,70 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 30px;
+  gap: 25px;
+`
+
+const Title = styled.h1`
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #2d3436;
 `
 
 const Form = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-bottom: 15px;
-  width: 290px;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  width: 320px;
+  background: #f5f6fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+`
+
+const Label = styled.label`
+  font-size: 14px;
+  color: #2d3436;
 `
 
 const Input = styled.input`
-  padding: 8px;
-  font-size: 15px;
-  border-radius: 10px;
-  border: none;
+  padding: 8px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
 `
 
 const BookItem = styled.div`
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  width: 140px;
-  margin-left: 14px;
-  justify-content: center;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+
+  margin-right: 20px;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+`
+const BookTitle = styled.strong`
+  width: 100px;
+  font-size: 14px;
 `
 
 const BookCover = styled.img`
   width: 100px;
-  height: 160px;
+  height: 150px;
   object-fit: contain;
+  border-radius: 6px;
 `
 
 export default function LibraryControl() {
@@ -150,7 +180,8 @@ export default function LibraryControl() {
 
   return (
     <Container>
-      <h1>Gestión de Libros</h1>
+      <Title>Gestión de Libros</Title>
+
       <Form>
         <Input
           value={formData.title}
@@ -175,26 +206,26 @@ export default function LibraryControl() {
           options={categories}
           placeholder='Selecciona categoría'
         />
-        <label>
-          Disponible:
+        <Label>
           <input
             type='checkbox'
             checked={formData.available}
             onChange={(e) =>
               setFormData({ ...formData, available: e.target.checked })
             }
-          />
-        </label>
+          />{' '}
+          Disponible
+        </Label>
         <Input
           type='file'
           onChange={(e) =>
             setFormData({ ...formData, covers: e.target.files[0] })
           }
         />
-        <Button onClick={handleCreate}>Crear</Button>
+        <Button onClick={handleCreate}>Crear libro</Button>
       </Form>
 
-      {message && <p style={{ color: 'green' }}>{message}</p>}
+      {message && <p style={{ color: '#00b894', margin: 0 }}>{message}</p>}
 
       <SearchInput
         value={searchTerm}
@@ -236,8 +267,7 @@ export default function LibraryControl() {
                   options={categories}
                   placeholder='Selecciona categoría'
                 />
-                <label>
-                  Disponible:
+                <Label>
                   <input
                     type='checkbox'
                     checked={formData.available}
@@ -247,8 +277,9 @@ export default function LibraryControl() {
                         available: e.target.checked
                       })
                     }
-                  />
-                </label>
+                  />{' '}
+                  Disponible
+                </Label>
                 <Input
                   type='file'
                   onChange={(e) =>
@@ -264,14 +295,17 @@ export default function LibraryControl() {
               </>
             ) : (
               <>
-                <strong>{b.title}</strong> — {b.author} ({b.isbn})
+                <BookTitle>{b.title}</BookTitle>
+
+                <div>{b.author}</div>
+                <div>ISBN: {b.isbn}</div>
                 <div>Categoría: {b.category}</div>
                 <div>Disponible: {b.available ? 'Sí' : 'No'}</div>
                 <BookCover
                   src={b.covers || '/assets/placeholder.png'}
                   alt={b.title}
                 />
-                <div style={{ display: 'flex', gap: '10px' }}>
+                <div style={{ display: 'flex', gap: '8px' }}>
                   <Button bg='#0984e3' onClick={() => handleEdit(b)}>
                     Editar
                   </Button>
