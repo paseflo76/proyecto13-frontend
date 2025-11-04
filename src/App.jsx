@@ -15,6 +15,7 @@ import LibraryControl from './pages/LibraryControl'
 import Footer from './components/common/Footer'
 import { GlobalStyle } from './GlobalStyle'
 
+
 const Container = styled.div`
   min-height: 100vh;
   background-color: #e2dcc5;
