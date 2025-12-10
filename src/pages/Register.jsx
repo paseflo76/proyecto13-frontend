@@ -28,28 +28,33 @@ const Button = styled.button`
   border-radius: 5px;
   background-color: #d1beebff;
 `
+const ErrorMessage = styled.p`
+  color: var(--color-error);
+  font-weight: bold;
+  margin-top: 5px;
+  font-size: 0.9rem;
+`
 
 export default function Register() {
   const { register } = useAuth()
-  const Navigate = useNavigate()
+  const navigate = useNavigate()
   const [userName, setuserName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     setLoading(true)
-    setError('')
+    setErrors({})
     try {
       const res = await register({ userName, email, password })
-      console.log('Registro exitoso:', res.data)
-      Navigate('/')
-    } catch (error) {
-      console.log('Error backend:', error.response?.data)
-      setError(error.response?.data?.message || 'Error desconocido')
+      if (res.success) navigate('/')
+      else if (res.details) setErrors(res.details)
+      else setErrors({ general: res.message })
+    } catch (err) {
+      setErrors({ general: err.response?.data?.message || 'Error desconocido' })
     } finally {
       setLoading(false)
     }
@@ -67,21 +72,24 @@ export default function Register() {
           value={userName}
           onChange={(e) => setuserName(e.target.value)}
         />
+        {errors.userName && <ErrorMessage>{errors.userName}</ErrorMessage>}{' '}
         <Input
           type='email'
           placeholder='Email'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+        {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}{' '}
         <Input
           type='password'
           placeholder='Password'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        {errors.password && <ErrorMessage>{errors.password}</ErrorMessage>}{' '}
         <Button type='submit'>Registrarse</Button>
+        {errors.general && <ErrorMessage>{errors.general}</ErrorMessage>}{' '}
       </Form>
-      {error && <p>{error}</p>}
     </Container>
   )
 }

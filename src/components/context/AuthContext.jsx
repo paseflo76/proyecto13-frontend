@@ -29,6 +29,19 @@ export const AuthProvider = ({ children }) => {
     checkAuth()
   }, [token])
 
+  const normalizeError = (error) => {
+    if (error.response?.data?.errors) {
+      return { details: error.response.data.errors }
+    }
+    if (typeof error.response?.data === 'string') {
+      return { details: { general: error.response.data } }
+    }
+    if (error.response?.data?.message) {
+      return { details: { general: error.response.data.message } }
+    }
+    return { details: { general: 'Error desconocido' } }
+  }
+
   const login = async (credentials) => {
     try {
       const response = await loginAPI(credentials)
@@ -40,10 +53,7 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true }
     } catch (error) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Error al iniciar sesión'
-      }
+      return { success: false, ...normalizeError(error) }
     }
   }
 
@@ -58,10 +68,7 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true }
     } catch (error) {
-      return {
-        success: false,
-        message: error.response?.data?.message || 'Error al registrarse'
-      }
+      return { success: false, ...normalizeError(error) }
     }
   }
 

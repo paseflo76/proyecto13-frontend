@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
+import { useAuth } from '../../hooks/useAuth'
 
 const Nav = styled.nav`
   display: flex;
@@ -81,11 +82,12 @@ const LogoutButton = styled.button`
 `
 
 export default function Navbar() {
+  const { token, logout } = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
 
   const handleLogout = () => {
-    localStorage.removeItem('token')
+    logout()
     navigate('/login')
     setMenuOpen(false)
   }
@@ -97,28 +99,46 @@ export default function Navbar() {
       </Logo>
 
       <Links open={menuOpen}>
-        <StyledLink to='/' onClick={() => setMenuOpen(false)}>
-          Inicio
-        </StyledLink>
-        <StyledLink to='/books' onClick={() => setMenuOpen(false)}>
-          Libros
-        </StyledLink>
-        <StyledLink to='/my-loans' onClick={() => setMenuOpen(false)}>
-          Mis Préstamos
-        </StyledLink>
-        <StyledLink to='/admin' onClick={() => setMenuOpen(false)}>
-          Admin
-        </StyledLink>
-        <StyledLink to='/login' onClick={() => setMenuOpen(false)}>
-          Login
-        </StyledLink>
-        <StyledLink to='/register' onClick={() => setMenuOpen(false)}>
-          Registro
-        </StyledLink>
-        <StyledLink to='/library-control' onClick={() => setMenuOpen(false)}>
-          Control Biblioteca
-        </StyledLink>
-        <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+        {token && (
+          <>
+            <StyledLink to='/' onClick={() => setMenuOpen(false)}>
+              Inicio
+            </StyledLink>
+
+            <StyledLink to='/books' onClick={() => setMenuOpen(false)}>
+              Libros
+            </StyledLink>
+
+            <StyledLink to='/my-loans' onClick={() => setMenuOpen(false)}>
+              Mis Préstamos
+            </StyledLink>
+
+            <StyledLink to='/admin' onClick={() => setMenuOpen(false)}>
+              Admin
+            </StyledLink>
+
+            <StyledLink
+              to='/library-control'
+              onClick={() => setMenuOpen(false)}
+            >
+              Control Biblioteca
+            </StyledLink>
+
+            <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+          </>
+        )}
+
+        {!token && (
+          <>
+            <StyledLink to='/login' onClick={() => setMenuOpen(false)}>
+              Login
+            </StyledLink>
+
+            <StyledLink to='/register' onClick={() => setMenuOpen(false)}>
+              Registro
+            </StyledLink>
+          </>
+        )}
       </Links>
 
       <MenuIcon

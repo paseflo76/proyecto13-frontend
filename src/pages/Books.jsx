@@ -9,8 +9,10 @@ import BookGrid from '../components/common/BookGrid'
 
 const PageContainer = styled.div`
   padding: 30px;
+  display: flex;
+  flex-direction: column;
+  min-height: 80vh;
 `
-
 const FilterContainer = styled.div`
   display: flex;
   gap: 10px;
@@ -18,22 +20,30 @@ const FilterContainer = styled.div`
   align-items: center;
   flex-direction: column;
 `
-
 const CategorySection = styled.div`
-  diplay: flex;
+  display: flex;
   flex-direction: column;
-
   margin-bottom: 45px;
-  @media (max-width: 756px) {
-    margin-left: 25px;
-  }
 `
-
 const CategoryTitle = styled.h2`
   margin-bottom: 15px;
   text-transform: capitalize;
   border-bottom: 2px solid var(--color-border);
   padding-bottom: 5px;
+`
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+`
+const PageButton = styled.button`
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  background-color: ${({ active }) => (active ? '#6c5ce7' : '#d1beebff')};
+  color: ${({ active }) => (active ? 'white' : 'black')};
+  cursor: pointer;
 `
 
 export default function Books() {
@@ -42,6 +52,9 @@ export default function Books() {
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const limit = 20
 
   const fetchCategories = async () => {
     try {
@@ -52,13 +65,21 @@ export default function Books() {
     }
   }
 
-  const fetchBooks = async (category = '') => {
+  const fetchBooks = async (category = '', pageNumber = 1) => {
     setLoading(true)
     try {
       let res
-      if (category) res = await getBooksByCategory(category)
-      else res = await getBooks()
-      setBooks(res.data)
+      if (category) {
+        res = await getBooksByCategory(category, pageNumber, limit)
+        setBooks(res.data.books)
+        setTotalPages(res.data.totalPages)
+        setPage(res.data.currentPage)
+      } else {
+        res = await getBooks(pageNumber, limit)
+        setBooks(res.data.books)
+        setTotalPages(res.data.totalPages)
+        setPage(res.data.currentPage)
+      }
     } catch (err) {
       console.error('Error al obtener libros:', err)
     } finally {
@@ -72,7 +93,7 @@ export default function Books() {
   }, [])
 
   useEffect(() => {
-    fetchBooks(selectedCategory)
+    fetchBooks(selectedCategory, 1)
   }, [selectedCategory])
 
   const filteredBooks = books.filter(
@@ -80,12 +101,6 @@ export default function Books() {
       book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       book.author.toLowerCase().includes(searchTerm.toLowerCase())
   )
-
-  const booksByCategory = categories.reduce((acc, category) => {
-    const booksInCategory = filteredBooks.filter((b) => b.category === category)
-    if (booksInCategory.length > 0) acc[category] = booksInCategory
-    return acc
-  }, {})
 
   if (loading) return <Loader />
 
@@ -105,16 +120,25 @@ export default function Books() {
         />
       </FilterContainer>
 
-      {Object.entries(booksByCategory).map(([category, books]) => (
-        <CategorySection key={category}>
-          <CategoryTitle>{category}</CategoryTitle>
-          <BookGrid>
-            {books.map((book) => (
-              <BookCard key={book._id} book={book} />
-            ))}
-          </BookGrid>
-        </CategorySection>
-      ))}
+      <BookGrid>
+        {filteredBooks.map((book) => (
+          <BookCard key={book._id} book={book} />
+        ))}
+      </BookGrid>
+
+      {totalPages > 1 && (
+        <PaginationContainer>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <PageButton
+              key={i}
+              active={i + 1 === page}
+              onClick={() => fetchBooks(selectedCategory, i + 1)}
+            >
+              {i + 1}
+            </PageButton>
+          ))}
+        </PaginationContainer>
+      )}
     </PageContainer>
   )
 }

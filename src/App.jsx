@@ -15,10 +15,14 @@ import LibraryControl from './pages/LibraryControl'
 import Footer from './components/common/Footer'
 import { GlobalStyle } from './GlobalStyle'
 
-
 const Container = styled.div`
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background-color: #e2dcc5;
+`
+const MainContent = styled.main`
+  flex: 1;
 `
 
 function App() {

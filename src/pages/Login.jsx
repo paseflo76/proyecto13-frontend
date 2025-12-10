@@ -10,20 +10,17 @@ const Container = styled.div`
   align-items: center;
   margin-top: 220px;
 `
-
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
 `
-
 const Input = styled.input`
   padding: 10px;
   border-radius: 10px;
   border: 1px solid #ccc;
 `
-
 const Button = styled.button`
   padding: 10px 20px;
   border: none;
@@ -33,27 +30,29 @@ const Button = styled.button`
 const ErrorMessage = styled.p`
   color: var(--color-error);
   font-weight: bold;
-  margin-top: 10px;
+  margin-top: 5px;
+  font-size: 0.9rem;
 `
 
 export default function Login() {
   const { login } = useAuth()
   const [userName, setuserName] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
+    setErrors({})
     try {
       const res = await login({ userName, password })
       if (res.success) navigate('/')
-      else setError(res.message)
+      else if (res.details) setErrors(res.details)
+      else setErrors({ general: res.message })
     } catch (err) {
-      setError(err.response?.data?.message || 'Error desconocido')
+      setErrors({ general: err.response?.data?.message || 'Error desconocido' })
     } finally {
       setLoading(false)
     }
@@ -70,6 +69,7 @@ export default function Login() {
           onChange={(e) => setuserName(e.target.value)}
           disabled={loading}
         />
+        {errors.userName && <ErrorMessage>{errors.userName}</ErrorMessage>}{' '}
         <Input
           type='password'
           placeholder='Password'
@@ -77,11 +77,12 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           disabled={loading}
         />
+        {errors.password && <ErrorMessage>{errors.password}</ErrorMessage>}{' '}
         <Button type='submit' disabled={loading}>
           {loading ? 'Cargando...' : 'Iniciar sesión'}
         </Button>
+        {errors.general && <ErrorMessage>{errors.general}</ErrorMessage>}{' '}
       </Form>
-      {error && <ErrorMessage>{error}</ErrorMessage>}
     </Container>
   )
 }
