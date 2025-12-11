@@ -1,3 +1,4 @@
+// src/pages/Books.js
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { getCategories, getBooksByCategory, getBooks } from '../api/BooksApi'
@@ -7,36 +8,22 @@ import SearchInput from '../components/common/SearchInput'
 import CategorySelect from '../components/common/CategorySelect'
 import BookGrid from '../components/common/BookGrid'
 
+import CategoryOption from '../components/common/CategoryOption'
+
 const PageContainer = styled.div`
   padding: 30px;
   display: flex;
   flex-direction: column;
   min-height: 80vh;
 `
-const FilterContainer = styled.div`
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  align-items: center;
-  flex-direction: column;
-`
-const CategorySection = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 45px;
-`
-const CategoryTitle = styled.h2`
-  margin-bottom: 15px;
-  text-transform: capitalize;
-  border-bottom: 2px solid var(--color-border);
-  padding-bottom: 5px;
-`
+
 const PaginationContainer = styled.div`
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 20px;
 `
+
 const PageButton = styled.button`
   padding: 6px 12px;
   border: none;
@@ -54,71 +41,80 @@ export default function Books() {
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+
   const limit = 20
 
-  const fetchCategories = async () => {
+  useEffect(() => {
+    loadCategories()
+    loadBooks()
+  }, [])
+
+  const loadCategories = async () => {
     try {
       const res = await getCategories()
       setCategories(res.data)
     } catch (err) {
-      console.error('Error al cargar categorías:', err)
+      console.error(err)
     }
   }
 
-  const fetchBooks = async (category = '', pageNumber = 1) => {
+  const loadBooks = async (category = '', pageNumber = 1) => {
     setLoading(true)
     try {
       let res
       if (category) {
         res = await getBooksByCategory(category, pageNumber, limit)
-        setBooks(res.data.books)
-        setTotalPages(res.data.totalPages)
-        setPage(res.data.currentPage)
       } else {
         res = await getBooks(pageNumber, limit)
-        setBooks(res.data.books)
-        setTotalPages(res.data.totalPages)
-        setPage(res.data.currentPage)
       }
+
+      setBooks(res.data.books)
+      setTotalPages(res.data.totalPages)
+      setPage(res.data.currentPage)
     } catch (err) {
-      console.error('Error al obtener libros:', err)
+      console.error(err)
     } finally {
       setLoading(false)
     }
   }
 
-  useEffect(() => {
-    fetchCategories()
-    fetchBooks()
-  }, [])
-
-  useEffect(() => {
-    fetchBooks(selectedCategory, 1)
-  }, [selectedCategory])
-
-  const filteredBooks = books.filter(
-    (book) =>
-      book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredBooks = books.filter((b) => {
+    const text = searchTerm.toLowerCase()
+    return (
+      b.title.toLowerCase().includes(text) ||
+      b.author.toLowerCase().includes(text)
+    )
+  })
 
   if (loading) return <Loader />
 
   return (
     <PageContainer>
-      <FilterContainer>
-        <CategorySelect
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          options={categories}
-          placeholder='Todas las categorías'
-        />
-        <SearchInput
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder='Buscar por título o autor...'
-        />
-      </FilterContainer>
+      {/* NUEVO — Carrusel visual */}
+      <CategoryOption
+        categories={categories}
+        onSelect={(cat) => {
+          setSelectedCategory(cat)
+          loadBooks(cat, 1)
+        }}
+      />
+
+      {/* Select original — lo mantienes */}
+      <CategorySelect
+        value={selectedCategory}
+        onChange={(e) => {
+          setSelectedCategory(e.target.value)
+          loadBooks(e.target.value, 1)
+        }}
+        options={categories}
+        placeholder='Todas las categorías'
+      />
+
+      <SearchInput
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        placeholder='Buscar por título o autor...'
+      />
 
       <BookGrid>
         {filteredBooks.map((book) => (
@@ -131,8 +127,8 @@ export default function Books() {
           {Array.from({ length: totalPages }, (_, i) => (
             <PageButton
               key={i}
-              active={i + 1 === page}
-              onClick={() => fetchBooks(selectedCategory, i + 1)}
+              active={page === i + 1}
+              onClick={() => loadBooks(selectedCategory, i + 1)}
             >
               {i + 1}
             </PageButton>

@@ -56,7 +56,7 @@ const Category = styled.p`
 
 const Cover = styled.img`
   width: 100%;
-  height: 220px;
+  max-height: 200px;
   object-fit: contain;
   border-radius: 8px;
 

@@ -1,14 +1,18 @@
 import api from './axios'
 
-
-export const getBooks = (params) => api.get('/books', { params })
+export const getBooks = (page = 1, limit = 20) =>
+  api.get('/books', {
+    params: { page, limit }
+  })
 
 export const getCategories = () => api.get('/books/categories')
 
 export const getBookById = (id) => api.get(`/books/${id}`)
 
-export const getBooksByCategory = (category) =>
-  api.get(`/books/category/${category}`)
+export const getBooksByCategory = (category, page = 1, limit = 20) =>
+  api.get(`/books/category/${category}`, {
+    params: { page, limit }
+  })
 
 export const postBook = (bookData) => {
   const formData = new FormData()
