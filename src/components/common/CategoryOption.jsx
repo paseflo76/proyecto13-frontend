@@ -11,11 +11,11 @@ const Scroll = styled.div`
   padding-bottom: 10px;
 
   &::-webkit-scrollbar {
-    height: 8px;
+    height: 16px;
   }
   &::-webkit-scrollbar-thumb {
     background: #c3b2dd;
-    border-radius: 4px;
+    border-radius: 8px;
   }
 `
 
