@@ -1,13 +1,10 @@
-// src/pages/Books.js
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { getCategories, getBooksByCategory, getBooks } from '../api/BooksApi'
 import BookCard from '../components/books/BookCard'
 import Loader from '../components/common/Loader'
 import SearchInput from '../components/common/SearchInput'
-import CategorySelect from '../components/common/CategorySelect'
 import BookGrid from '../components/common/BookGrid'
-
 import CategoryOption from '../components/common/CategoryOption'
 
 const PageContainer = styled.div`
@@ -28,8 +25,8 @@ const PageButton = styled.button`
   padding: 6px 12px;
   border: none;
   border-radius: 4px;
-  background-color: ${({ active }) => (active ? '#6c5ce7' : '#d1beebff')};
-  color: ${({ active }) => (active ? 'white' : 'black')};
+  background-color: ${({ $active }) => ($active ? '#6c5ce7' : '#d1beebff')};
+  color: ${({ $active }) => ($active ? 'white' : 'black')};
   cursor: pointer;
 `
 
@@ -90,24 +87,12 @@ export default function Books() {
 
   return (
     <PageContainer>
-      {/* NUEVO — Carrusel visual */}
       <CategoryOption
         categories={categories}
         onSelect={(cat) => {
           setSelectedCategory(cat)
           loadBooks(cat, 1)
         }}
-      />
-
-      {/* Select original — lo mantienes */}
-      <CategorySelect
-        value={selectedCategory}
-        onChange={(e) => {
-          setSelectedCategory(e.target.value)
-          loadBooks(e.target.value, 1)
-        }}
-        options={categories}
-        placeholder='Todas las categorías'
       />
 
       <SearchInput
@@ -124,15 +109,33 @@ export default function Books() {
 
       {totalPages > 1 && (
         <PaginationContainer>
+          <PageButton
+            $active={false}
+            disabled={page === 1}
+            onClick={() => page > 1 && loadBooks(selectedCategory, page - 1)}
+          >
+            &lt;
+          </PageButton>
+
           {Array.from({ length: totalPages }, (_, i) => (
             <PageButton
               key={i}
-              active={page === i + 1}
+              $active={page === i + 1}
               onClick={() => loadBooks(selectedCategory, i + 1)}
             >
               {i + 1}
             </PageButton>
           ))}
+
+          <PageButton
+            $active={false}
+            disabled={page === totalPages}
+            onClick={() =>
+              page < totalPages && loadBooks(selectedCategory, page + 1)
+            }
+          >
+            &gt;
+          </PageButton>
         </PaginationContainer>
       )}
     </PageContainer>

@@ -9,6 +9,7 @@ const Grid = styled.div`
 
   @media (max-width: 756px) {
     grid-template-columns: repeat(2, 172px);
+    margin-left: 22px;
   }
 `
 

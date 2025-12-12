@@ -15,6 +15,12 @@ const CardBooks = styled.div`
   align-items: center;
   gap: 6px;
   text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
 
   @media (max-width: 756px) {
     width: 160px;

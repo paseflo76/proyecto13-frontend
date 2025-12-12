@@ -23,6 +23,13 @@ const CategoryCard = styled.div`
   min-width: 130px;
   cursor: pointer;
   text-align: center;
+  border-radius: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
 `
 
 const CategoryImage = styled.img`
@@ -39,14 +46,13 @@ const CategoryName = styled.div`
   text-transform: capitalize;
 `
 
-// 🔥 AQUÍ DEFINES TUS ICONOS EXACTOS
 const CATEGORY_ICONS = {
   fantasy: '/assets/hada.png',
   horror: '/assets/horror.png',
   romance: '/assets/romance.png',
   science: '/assets/science.png',
   children: '/assets/children.png',
-  tecnologia: '/assets/Bonbilla.png',
+  technology: '/assets/Bonbilla.png',
   fiction: '/assets/ovni.png',
   history: '/assets/history.png',
   biography: '/assets/libro.png',
@@ -60,12 +66,13 @@ const CATEGORY_ICONS = {
   art: '/assets/arte.png',
   comic: '/assets/comic.png',
   graphicNovel: '/assets/novela.png',
-  trueCcrime: '/assets/crime.png'
+  trueCrime: '/assets/crime.png'
 }
 
 export default function CategoryCarousel({ categories, onSelect }) {
   return (
     <Wrapper>
+      <h1>Category</h1>
       <Scroll>
         {categories.map((cat) => {
           const image = CATEGORY_ICONS[cat] || '/assets/default.png'

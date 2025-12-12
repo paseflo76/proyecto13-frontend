@@ -78,10 +78,10 @@ const Status = styled.span`
   border-radius: 8px;
   color: white;
   font-weight: 500;
-  background-color: ${({ status }) =>
-    status === 'returned'
+  background-color: ${({ $status }) =>
+    $status === 'returned'
       ? '#00b894'
-      : status === 'pending'
+      : $status === 'pending'
       ? '#fdcb6e'
       : '#d63031'};
 `
@@ -138,7 +138,7 @@ export default function AdminPanel() {
                     : '-'}
                 </td>
                 <td>
-                  <Status status={loan.status}>{loan.status}</Status>
+                  <Status $status={loan.status}>{loan.status}</Status>
                 </td>
               </tr>
             ))}
