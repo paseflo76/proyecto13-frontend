@@ -15,13 +15,15 @@ export default function SearchInput({
   onChange,
   placeholder,
   width,
-  margin
+  margin,
+  onKeyDown
 }) {
   return (
     <StyledInput
       type='text'
       value={value}
       onChange={onChange}
+      onKeyDown={onKeyDown}
       placeholder={placeholder}
       width={width}
       margin={margin}

@@ -36,15 +36,20 @@ export default function Books() {
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [tempSearch, setTempSearch] = useState('')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-
   const limit = 20
 
   useEffect(() => {
     loadCategories()
     loadBooks()
   }, [])
+
+  // Nuevo useEffect para disparar búsqueda al cambiar searchTerm o selectedCategory
+  useEffect(() => {
+    loadBooks(selectedCategory, 1, searchTerm)
+  }, [searchTerm, selectedCategory])
 
   const loadCategories = async () => {
     try {
@@ -55,16 +60,15 @@ export default function Books() {
     }
   }
 
-  const loadBooks = async (category = '', pageNumber = 1) => {
+  const loadBooks = async (category = '', pageNumber = 1, search = '') => {
     setLoading(true)
     try {
       let res
       if (category) {
-        res = await getBooksByCategory(category, pageNumber, limit)
+        res = await getBooksByCategory(category, pageNumber, limit, search)
       } else {
-        res = await getBooks(pageNumber, limit)
+        res = await getBooks(pageNumber, limit, search)
       }
-
       setBooks(res.data.books)
       setTotalPages(res.data.totalPages)
       setPage(res.data.currentPage)
@@ -75,14 +79,6 @@ export default function Books() {
     }
   }
 
-  const filteredBooks = books.filter((b) => {
-    const text = searchTerm.toLowerCase()
-    return (
-      b.title.toLowerCase().includes(text) ||
-      b.author.toLowerCase().includes(text)
-    )
-  })
-
   if (loading) return <Loader />
 
   return (
@@ -91,18 +87,23 @@ export default function Books() {
         categories={categories}
         onSelect={(cat) => {
           setSelectedCategory(cat)
-          loadBooks(cat, 1)
         }}
       />
 
       <SearchInput
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        value={tempSearch}
+        onChange={(e) => setTempSearch(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault() // previene recarga
+            setSearchTerm(tempSearch) // dispara useEffect
+          }
+        }}
         placeholder='Buscar por título o autor...'
       />
 
       <BookGrid>
-        {filteredBooks.map((book) => (
+        {books.map((book) => (
           <BookCard key={book._id} book={book} />
         ))}
       </BookGrid>
@@ -112,7 +113,9 @@ export default function Books() {
           <PageButton
             $active={false}
             disabled={page === 1}
-            onClick={() => page > 1 && loadBooks(selectedCategory, page - 1)}
+            onClick={() =>
+              page > 1 && loadBooks(selectedCategory, page - 1, searchTerm)
+            }
           >
             &lt;
           </PageButton>
@@ -121,7 +124,7 @@ export default function Books() {
             <PageButton
               key={i}
               $active={page === i + 1}
-              onClick={() => loadBooks(selectedCategory, i + 1)}
+              onClick={() => loadBooks(selectedCategory, i + 1, searchTerm)}
             >
               {i + 1}
             </PageButton>
@@ -131,7 +134,8 @@ export default function Books() {
             $active={false}
             disabled={page === totalPages}
             onClick={() =>
-              page < totalPages && loadBooks(selectedCategory, page + 1)
+              page < totalPages &&
+              loadBooks(selectedCategory, page + 1, searchTerm)
             }
           >
             &gt;

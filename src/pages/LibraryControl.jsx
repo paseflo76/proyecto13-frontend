@@ -3,11 +3,19 @@ import styled from 'styled-components'
 import { useAuth } from '../hooks/useAuth'
 import api from '../api/axios'
 import { getCategories } from '../api/BooksApi'
-import SearchInput from '../components/common/SearchInput'
 import CategorySelect from '../components/common/CategorySelect'
 import BookGrid from '../components/common/BookGrid'
 import Button from '../components/common/Button'
 import Loader from '../components/common/Loader'
+
+// SearchInput corregido para propagar onKeyDown
+const SearchInput = styled.input`
+  padding: 8px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 40%;
+`
 
 const Container = styled.div`
   display: flex;
@@ -60,13 +68,13 @@ const BookItem = styled.div`
   text-align: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease;
-
   margin-right: 20px;
 
   &:hover {
     transform: translateY(-2px);
   }
 `
+
 const BookTitle = styled.strong`
   width: 100px;
   font-size: 14px;
@@ -79,14 +87,35 @@ const BookCover = styled.img`
   border-radius: 6px;
 `
 
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+`
+
+const PageButton = styled.button`
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  background-color: ${({ $active }) => ($active ? '#6c5ce7' : '#d1beebff')};
+  color: ${({ $active }) => ($active ? 'white' : 'black')};
+  cursor: pointer;
+`
+
 export default function LibraryControl() {
   const { user } = useAuth()
   const [books, setBooks] = useState([])
   const [categories, setCategories] = useState([])
   const [editingBook, setEditingBook] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [tempSearch, setTempSearch] = useState('')
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const limit = 20
+
   const [formData, setFormData] = useState({
     title: '',
     author: '',
@@ -96,10 +125,19 @@ export default function LibraryControl() {
     covers: null
   })
 
-  const fetchBooks = async () => {
+  const fetchBooks = async (pageNumber = 1, search = '') => {
+    setLoading(true)
     try {
-      const res = await api.get('/books')
-      setBooks(Array.isArray(res.data) ? res.data : res.data.books || [])
+      const params = new URLSearchParams({
+        page: pageNumber,
+        limit,
+        query: search
+      })
+      const endpoint = search ? `/books/search?${params}` : `/books?${params}`
+      const res = await api.get(endpoint)
+      setBooks(res.data.books)
+      setTotalPages(res.data.totalPages)
+      setPage(res.data.currentPage)
     } catch (err) {
       console.error('Error al obtener libros:', err)
     } finally {
@@ -117,9 +155,13 @@ export default function LibraryControl() {
   }
 
   useEffect(() => {
-    fetchBooks()
+    fetchBooks(1)
     fetchCategories()
   }, [])
+
+  useEffect(() => {
+    fetchBooks(1, searchTerm)
+  }, [searchTerm])
 
   const handleCreate = async () => {
     setLoading(true)
@@ -137,7 +179,7 @@ export default function LibraryControl() {
       available: true,
       covers: null
     })
-    await fetchBooks()
+    await fetchBooks(page, searchTerm)
   }
 
   const handleEdit = (book) => {
@@ -161,20 +203,14 @@ export default function LibraryControl() {
     await api.put(`/books/${id}`, data)
     setEditingBook(null)
     setMessage('Libro editado correctamente')
-    await fetchBooks()
+    await fetchBooks(page, searchTerm)
   }
 
   const handleDelete = async (id) => {
     setLoading(true)
     await api.delete(`/books/${id}`)
-    await fetchBooks()
+    await fetchBooks(page, searchTerm)
   }
-
-  const filteredBooks = books.filter(
-    (b) =>
-      b.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      b.author.toLowerCase().includes(searchTerm.toLowerCase())
-  )
 
   if (loading) return <Loader />
 
@@ -228,13 +264,19 @@ export default function LibraryControl() {
       {message && <p style={{ color: '#00b894', margin: 0 }}>{message}</p>}
 
       <SearchInput
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        value={tempSearch}
+        onChange={(e) => setTempSearch(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault()
+            setSearchTerm(tempSearch)
+          }
+        }}
         placeholder='Buscar libro por título o autor...'
       />
 
       <BookGrid>
-        {filteredBooks.map((b) => (
+        {books.map((b) => (
           <BookItem key={b._id}>
             {editingBook === b._id ? (
               <>
@@ -272,10 +314,7 @@ export default function LibraryControl() {
                     type='checkbox'
                     checked={formData.available}
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        available: e.target.checked
-                      })
+                      setFormData({ ...formData, available: e.target.checked })
                     }
                   />{' '}
                   Disponible
@@ -296,7 +335,6 @@ export default function LibraryControl() {
             ) : (
               <>
                 <BookTitle>{b.title}</BookTitle>
-
                 <div>{b.author}</div>
                 <div>ISBN: {b.isbn}</div>
                 <div>Categoría: {b.category}</div>
@@ -318,6 +356,36 @@ export default function LibraryControl() {
           </BookItem>
         ))}
       </BookGrid>
+
+      {totalPages > 1 && (
+        <PaginationContainer>
+          <PageButton
+            $active={false}
+            disabled={page === 1}
+            onClick={() => fetchBooks(page - 1, searchTerm)}
+          >
+            &lt;
+          </PageButton>
+
+          {Array.from({ length: totalPages }, (_, i) => (
+            <PageButton
+              key={i}
+              $active={page === i + 1}
+              onClick={() => fetchBooks(i + 1, searchTerm)}
+            >
+              {i + 1}
+            </PageButton>
+          ))}
+
+          <PageButton
+            $active={false}
+            disabled={page === totalPages}
+            onClick={() => fetchBooks(page + 1, searchTerm)}
+          >
+            &gt;
+          </PageButton>
+        </PaginationContainer>
+      )}
     </Container>
   )
 }

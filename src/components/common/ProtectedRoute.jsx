@@ -8,9 +8,9 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
 
   if (loading) return <Loader />
 
-  if (!user) return <Navigate to='/login' replace />
+  if (!user) return <Navigate to="/login" replace />
 
-  if (requireAdmin && !isAdmin()) return <Navigate to='/' replace />
+  if (requireAdmin && !isAdmin()) return <Navigate to="/" replace />
 
   return children
 }
