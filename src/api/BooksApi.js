@@ -14,6 +14,9 @@ export const getBooksByCategory = (category, page = 1, limit = 20) =>
     params: { page, limit }
   })
 
+export const searchBooks = (query = '', page = 1, limit = 20) =>
+  api.get('/books/search', { params: { query, page, limit } })
+
 export const postBook = (bookData) => {
   const formData = new FormData()
   Object.entries(bookData).forEach(([key, value]) => {

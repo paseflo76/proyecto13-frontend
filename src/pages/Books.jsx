@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { getCategories, getBooksByCategory, getBooks } from '../api/BooksApi'
+import {
+  getCategories,
+  getBooksByCategory,
+  getBooks,
+  searchBooks
+} from '../api/BooksApi'
 import BookCard from '../components/books/BookCard'
 import Loader from '../components/common/Loader'
 import SearchInput from '../components/common/SearchInput'
@@ -46,8 +51,8 @@ export default function Books() {
     loadBooks()
   }, [])
 
-  // Nuevo useEffect para disparar búsqueda al cambiar searchTerm o selectedCategory
   useEffect(() => {
+    //? disparar búsqueda o filtrado por categoría
     loadBooks(selectedCategory, 1, searchTerm)
   }, [searchTerm, selectedCategory])
 
@@ -64,11 +69,14 @@ export default function Books() {
     setLoading(true)
     try {
       let res
-      if (category) {
-        res = await getBooksByCategory(category, pageNumber, limit, search)
+      if (search) {
+        res = await searchBooks(search, pageNumber, limit)
+      } else if (category) {
+        res = await getBooksByCategory(category, pageNumber, limit)
       } else {
-        res = await getBooks(pageNumber, limit, search)
+        res = await getBooks(pageNumber, limit)
       }
+      console.log('Respuesta de libros:', res.data) // para depuración
       setBooks(res.data.books)
       setTotalPages(res.data.totalPages)
       setPage(res.data.currentPage)
@@ -85,22 +93,23 @@ export default function Books() {
     <PageContainer>
       <CategoryOption
         categories={categories}
-        onSelect={(cat) => {
-          setSelectedCategory(cat)
-        }}
+        onSelect={(cat) => setSelectedCategory(cat)}
       />
 
-      <SearchInput
-        value={tempSearch}
-        onChange={(e) => setTempSearch(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault() // previene recarga
-            setSearchTerm(tempSearch) // dispara useEffect
-          }
-        }}
-        placeholder='Buscar por título o autor...'
-      />
+      <div>
+        <SearchInput
+          value={tempSearch}
+          onChange={(e) => setTempSearch(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              console.log('Enter presionado, tempSearch:', tempSearch)
+              setSearchTerm(tempSearch)
+            }
+          }}
+          placeholder='Buscar por título o autor...'
+        />
+      </div>
 
       <BookGrid>
         {books.map((book) => (
