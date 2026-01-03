@@ -76,7 +76,7 @@ export default function Books() {
       } else {
         res = await getBooks(pageNumber, limit)
       }
-      console.log('Respuesta de libros:', res.data) // para depuración
+      console.log('Respuesta de libros:', res.data) 
       setBooks(res.data.books)
       setTotalPages(res.data.totalPages)
       setPage(res.data.currentPage)
